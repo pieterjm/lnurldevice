@@ -63,6 +63,26 @@ async def api_lnurldevice_retrieve(req: Request, lnurldevice_id: str):
     return lnurldevice
 
 
+@lnurldevice_ext.get(
+    "/api/v1/lnurlpos/connect/{lnurldevice_id}"
+)
+async def api_lnurldevice_retrieve(req: Request, lnurldevice_id: str):
+    lnurldevice = await get_lnurldevice(lnurldevice_id, req)
+    if not lnurldevice:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="lnurldevice does not exist"
+        )
+
+    connectdevice = {
+        "id": lnurldevice.id,
+        "key": lnurldevice.key,
+        "switches": lnurldevice.switches
+    }
+    
+    return connectdevice
+
+
+
 @lnurldevice_ext.delete(
     "/api/v1/lnurlpos/{lnurldevice_id}", dependencies=[Depends(require_admin_key)]
 )
