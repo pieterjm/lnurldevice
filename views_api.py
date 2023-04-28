@@ -74,8 +74,6 @@ async def api_lnurldevice_retrieve(req: Request, lnurldevice_id: str):
         )
 
     connectdevice = {
-        "id": lnurldevice.id,
-        "key": lnurldevice.key,
         "switches": lnurldevice.switches
     }
     
