@@ -17,6 +17,7 @@ from .crud import (
     create_lnurldevice,
     delete_lnurldevice,
     get_lnurldevice,
+    get_lnurldevice_like,
     get_lnurldevices,
     update_lnurldevice,
 )
