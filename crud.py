@@ -96,16 +96,43 @@ async def update_lnurldevice(
 
 async def get_lnurldevice(lnurldevice_id: str, req: Request) -> Optional[Lnurldevice]:
     """
-    retrieves a LNURLdevice based on the identifier. This function allows to retrieve the device
-    using only a limited numver of characters. This makes it possible to use a shorter ID for constrained devices
+    retrieves a LNURLdevice based on the identifier.
     """
     
-    if len(lnurldevice_id) < 5:
+    row = await db.fetchone(
+        "SELECT * FROM lnurldevice.lnurldevice WHERE id = ?", (lnurldevice_id,)
+    )
+    if not row:
         return None
 
+    device = Lnurldevice(**row)
+
+    # this is needed for backwards compabtibility, before the LNURL were cached inside db
+    if device.switches:
+        url = req.url_for("lnurldevice.lnurl_v2_params", device_id=device.id)
+        for _switch in device.switches:
+            if not _switch.lnurl:
+                _switch.lnurl = lnurl_encode(
+                    url
+                    + "?pin="
+                    + str(_switch.pin)
+                    + "&amount="
+                    + str(_switch.amount)
+                    + "&duration="
+                    + str(_switch.duration)
+                )
+
+    return device
+
+async def get_lnurldevice_like(lnurldevice_id: str, req: Request) -> Optional[Lnurldevice]:
+    """
+    retrieves a LNURLdevice based on the first 8 (or more) characters of the identifier.
+    """
+    if len(lnurldevice_id) < 8:
+        return None
     
     row = await db.fetchone(
-        "SELECT * FROM lnurldevice.lnurldevice WHERE id LIKE '?%'", (lnurldevice_id,)
+        "SELECT * FROM lnurldevice.lnurldevice WHERE id LIKE ?", (lnurldevice_id + "%",)
     )
     if not row:
         return None
