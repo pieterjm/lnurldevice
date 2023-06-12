@@ -15,7 +15,7 @@ async def create_lnurldevice(data: CreateLnurldevice, req: Request) -> Lnurldevi
     if data.device == "pos" or data.device == "atm":
         lnurldevice_id = shortuuid.uuid()[:5]
     else:
-        lnurldevice_id = shortuuid.uuid()[:8]
+        lnurldevice_id = shortuuid.uuid()
         
     lnurldevice_key = urlsafe_short_hash()
 
@@ -95,8 +95,17 @@ async def update_lnurldevice(
 
 
 async def get_lnurldevice(lnurldevice_id: str, req: Request) -> Optional[Lnurldevice]:
+    """
+    retrieves a LNURLdevice based on the identifier. This function allows to retrieve the device
+    using only a limited numver of characters. This makes it possible to use a shorter ID for constrained devices
+    """
+    
+    if len(lnurldevice_id) < 5:
+        return None
+
+    
     row = await db.fetchone(
-        "SELECT * FROM lnurldevice.lnurldevice WHERE id = ?", (lnurldevice_id,)
+        "SELECT * FROM lnurldevice.lnurldevice WHERE id LIKE '?%'", (lnurldevice_id,)
     )
     if not row:
         return None
