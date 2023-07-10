@@ -18,7 +18,7 @@ class CreateLnurldevice(BaseModel):
     wallet: str
     currency: str
     device: str
-    profit: float
+    profit: float = 0.0
     switches: Optional[List[LnurldeviceSwitch]]
 
 
