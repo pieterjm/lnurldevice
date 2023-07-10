@@ -11,7 +11,7 @@ class LnurldeviceSwitch(BaseModel):
     duration: int = 0
     pin: int = 0
     lnurl: Optional[str]
-
+    label: Optional[str]
 
 class CreateLnurldevice(BaseModel):
     title: str

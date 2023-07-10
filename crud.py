@@ -15,7 +15,8 @@ async def create_lnurldevice(data: CreateLnurldevice, req: Request) -> Lnurldevi
     if data.device == "pos" or data.device == "atm":
         lnurldevice_id = shortuuid.uuid()[:5]
     else:
-        lnurldevice_id = urlsafe_short_hash()
+        lnurldevice_id = shortuuid.uuid()[:8]
+
     lnurldevice_key = urlsafe_short_hash()
 
     if data.switches:
